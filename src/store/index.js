@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: { //类似data
-        count: 1,
+        count: 0,
         name: 'zhangsan',
         id: '123',
         obj: {id:123,value:'一二三'},
@@ -42,7 +42,7 @@ const store = new Vuex.Store({
     modules: {
         moduleA: {
             state: {
-                count: 0
+                count1: 1
             },
             getters: {
                 addCount (state) {
@@ -86,16 +86,38 @@ const store = new Vuex.Store({
         },
         moduleC: {
             state: {
-
+                count3: 3,
+                getData(){
+                    setTimeout(() => {
+                        window.console.log('getData');
+                        return 4
+                    }, 1000);
+                },
+                getOtherData(){
+                    setTimeout(() => {
+                        window.console.log('getOtherData');
+                        return 5
+                    }, 1000);
+                }
             },
             //组合 actions
             actions: {
-                async actionA ({ commit }) {
-                    commit('gotData', await getData())
+                async actionA ({ commit, state}) {
+                    commit('gotData', await state.getData())
                 },
-                async actionB ({ dispatch, commit }) {
+                async actionB ({ dispatch, commit, state}) {
                     await dispatch('actionA') // 等待 actionA 完成
-                    commit('gotOtherData', await getOtherData())
+                    commit('gotOtherData', await state.getOtherData())
+                }
+            },
+            mutations: {
+                gotData(state, paload){
+                    state.count3 += paload;
+                    window.console.log(state.count3);
+                },
+                gotOtherData(state, paload){
+                    state.count3 += paload;
+                    window.console.log(state.count3);
                 }
             }
         }
